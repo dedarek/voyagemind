@@ -1,8 +1,8 @@
 {
-  "name": "sanya-travel-planner",
+  "name": "voyagemind",
   "version": "0.1.0",
   "private": false,
-  "description": "An AI travel planning assistant with tool calling, hotel search, weather, POI discovery, and itinerary drafting.",
+  "description": "A tool-calling AI travel planner for hotel search, weather, POI discovery, community reviews, and itinerary drafting.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

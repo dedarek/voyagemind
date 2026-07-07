@@ -2,18 +2,21 @@ import { NextResponse } from 'next/server'
 import { searchHotels } from '@/lib/meituan-cli'
 import { isValidHotel, parseHotelList, sortHotelsForRecommendation } from '@/lib/meituan-parser'
 import { geoCode, searchPOI } from '@/lib/amap-api'
+import { CITY_AREA_PRESETS } from '@/lib/city-presets'
 import { getErrorMessage } from '@/lib/errors'
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ name: string }> },
 ) {
   try {
     const { name } = await params
+    const { searchParams } = new URL(request.url)
     const keyword = decodeURIComponent(name)
+    const city = searchParams.get('city') || '杭州'
 
     // 用酒店名重新搜索
-    const markdown = await searchHotels(keyword)
+    const markdown = await searchHotels(keyword, city)
     const { hotels } = parseHotelList(markdown)
     const validHotels = sortHotelsForRecommendation(hotels.filter(isValidHotel))
 
@@ -25,19 +28,13 @@ export async function GET(
 
     // 地理编码
     try {
-      const preset = ([
-        ['三亚湾', [109.49, 18.24]],
-        ['大东海', [109.52, 18.22]],
-        ['亚龙湾', [109.63, 18.21]],
-        ['海棠湾', [109.75, 18.29]],
-        ['市区', [109.51, 18.24]],
-      ] as const).find(([name]) => hotel.area.includes(name))
+      const preset = (CITY_AREA_PRESETS[city] || []).find(({ name }) => hotel.area.includes(name))
 
       if (preset) {
-        hotel.longitude = preset[1][0]
-        hotel.latitude = preset[1][1]
+        hotel.longitude = preset.center[0]
+        hotel.latitude = preset.center[1]
       } else {
-        const geo = await geoCode(hotel.name, '三亚')
+        const geo = await geoCode(hotel.name, city)
         hotel.longitude = geo.location[0]
         hotel.latitude = geo.location[1]
       }
@@ -48,7 +45,7 @@ export async function GET(
       try {
         const pois = await searchPOI(
           '景点|餐饮|购物',
-          '三亚',
+          city,
           '',
           `${hotel.longitude},${hotel.latitude}`,
         )

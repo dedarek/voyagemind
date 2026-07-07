@@ -4,7 +4,7 @@ import { getErrorMessage } from '@/lib/errors'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const city = searchParams.get('city') || '三亚'
+  const city = searchParams.get('city') || '杭州'
 
   try {
     const weather = await getWeather(city)

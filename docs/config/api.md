@@ -2,12 +2,12 @@
 
 This project uses multiple external services. Keep all credentials in `.env.local`; never commit real keys or tokens.
 
-## DeepSeek Chat API
+## OpenAI-compatible LLM API
 
 - Purpose: Agent reasoning and Function Calling
-- Endpoint: `https://api.deepseek.com/v1/chat/completions`
-- Environment variable: `DEEPSEEK_API_KEY`
-- Model: `deepseek-chat`
+- Endpoint: `${LLM_BASE_URL}/chat/completions`
+- Environment variables: `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`
+- Requirement: OpenAI-compatible chat completions with tool calling support
 
 ## AMap Web Service API
 

@@ -18,13 +18,13 @@ interface ChatMessage {
 const WELCOME_MSG: ChatMessage = {
   id: 'welcome',
   role: 'assistant',
-  content: '你好，我是小途，你的 AI 旅行规划助手。\n\n我可以帮你搜索酒店、天气、景点口碑和路线，把结果整理成可调整的旅行方案。\n\n告诉我目的地、时间、人数、预算和旅行节奏就能开始。',
+  content: '你好，我是 VoyageMind，你的 AI 旅行规划助手。\n\n我可以帮你搜索酒店、天气、景点口碑和路线，把结果整理成可调整的旅行方案。\n\n告诉我目的地、时间、人数、预算和旅行节奏就能开始。',
 }
 
 const QUICK_PROMPTS = [
   '国庆情侣去大理丽江，预算6000，想轻松一点',
   '成都亲子周末两天，预算2000，想住得方便',
-  '三亚四天三晚，想看海、吃海鲜、找性价比酒店',
+  '杭州三天两晚，想逛西湖、吃本地菜、找方便的酒店',
 ]
 
 function loadMessages(): ChatMessage[] {

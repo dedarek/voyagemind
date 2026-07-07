@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { searchHotels } from '@/lib/meituan-cli'
 import { isValidHotel, parseHotelList, sortHotelsForRecommendation } from '@/lib/meituan-parser'
 import { geoCode } from '@/lib/amap-api'
-import { SANYA_AREAS } from '@/lib/sanya-pois'
+import { CITY_AREA_PRESETS, CITY_CENTERS } from '@/lib/city-presets'
 import { getErrorMessage } from '@/lib/errors'
 import type { Hotel, HotelSearchParams } from '@/types/hotel'
 import NodeCache from 'node-cache'
@@ -12,17 +12,18 @@ const cache = new NodeCache({ stdTTL: 1800 }) // 30 分钟
 export async function POST(request: Request) {
   try {
     const params: HotelSearchParams = await request.json()
-    const keyword = params.keyword || '三亚酒店'
+    const city = params.city || '杭州'
+    const keyword = params.keyword || `${city}酒店`
 
     // 检查缓存
-    const cacheKey = `search:${keyword}`
+    const cacheKey = `search:${city}:${keyword}`
     const cached = cache.get(cacheKey)
     if (cached) {
       return NextResponse.json(cached)
     }
 
     // 调美团 CLI
-    const markdown = await searchHotels(keyword)
+    const markdown = await searchHotels(keyword, city)
 
     // 解析
     const { hotels, areas } = parseHotelList(markdown)
@@ -41,15 +42,16 @@ export async function POST(request: Request) {
     const areaGeos = new Map<string, { latitude: number; longitude: number }>()
     const uniqueAreas = [...new Set(validHotels.map(h => h.area))]
     for (const area of uniqueAreas) {
-      const preset = SANYA_AREAS.find(a => area.includes(a.name) || a.name.includes(area))
+      const preset = (CITY_AREA_PRESETS[city] || []).find(a => area.includes(a.name) || a.name.includes(area))
       if (preset) {
         areaGeos.set(area, { latitude: preset.center[1], longitude: preset.center[0] })
       } else {
         try {
-          const geo = await geoCode(`三亚${area}`, '三亚')
+          const geo = await geoCode(`${city}${area}`, city)
           areaGeos.set(area, { latitude: geo.location[1], longitude: geo.location[0] })
         } catch {
-          areaGeos.set(area, { latitude: 18.25, longitude: 109.51 })
+          const center = CITY_CENTERS[city] || CITY_CENTERS.杭州
+          areaGeos.set(area, { latitude: center[1], longitude: center[0] })
         }
       }
     }

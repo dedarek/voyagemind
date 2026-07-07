@@ -1,0 +1,14 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">VoyageMind logo</title>
+  <desc id="desc">A compass and neural route mark for an AI travel planning assistant.</desc>
+  <rect width="160" height="160" rx="36" fill="#0F172A"/>
+  <circle cx="80" cy="80" r="52" fill="#F8FAFC"/>
+  <circle cx="80" cy="80" r="43" fill="#DBEAFE"/>
+  <path d="M80 34v15M80 111v15M34 80h15M111 80h15" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+  <path d="M57 103l16-44c1.8-5 8.9-5 10.7 0L100 103c1.7 4.8-3.5 9.1-7.8 6.4L80 101.8l-12.2 7.6c-4.3 2.7-9.5-1.6-7.8-6.4Z" fill="#2563EB"/>
+  <path d="M80 62l9.7 32.4L80 88.5l-9.7 5.9L80 62Z" fill="#F59E0B"/>
+  <circle cx="49" cy="49" r="6" fill="#10B981"/>
+  <circle cx="111" cy="49" r="6" fill="#10B981"/>
+  <circle cx="49" cy="111" r="6" fill="#10B981"/>
+  <path d="M55 49h50M54 109c18-7 34-7 52 0" stroke="#10B981" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 8"/>
+</svg>

@@ -27,6 +27,7 @@ export interface Hotel {
 
 export interface HotelSearchParams {
   keyword: string
+  city?: string
   area?: string
   minPrice?: number
   maxPrice?: number

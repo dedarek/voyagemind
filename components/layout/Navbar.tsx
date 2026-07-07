@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Compass, Hotel, CloudSun, Calendar } from 'lucide-react'
+import { BrainCircuit, Hotel, CloudSun, Calendar } from 'lucide-react'
 
 const navItems = [
-  { href: '/', label: 'AI规划', icon: Compass },
+  { href: '/', label: 'AI规划', icon: BrainCircuit },
   { href: '/hotels', label: '酒店', icon: Hotel },
   { href: '/weather', label: '天气', icon: CloudSun },
   { href: '/itinerary', label: '行程', icon: Calendar },
@@ -20,8 +20,8 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 hidden md:block border-b border-slate-200 bg-white/90 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2 font-bold text-lg text-blue-600">
-            <Compass className="h-5 w-5" />
-            AI 旅行规划
+            <BrainCircuit className="h-5 w-5" />
+            VoyageMind
           </Link>
           <nav className="flex items-center gap-1">
             {navItems.map(item => {

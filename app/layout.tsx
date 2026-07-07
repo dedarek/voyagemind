@@ -3,8 +3,8 @@ import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 
 export const metadata: Metadata = {
-  title: 'AI 旅行规划',
-  description: 'AI 智能旅行规划助手 — 酒店比价、天气、景点、行程一站式规划',
+  title: 'VoyageMind',
+  description: 'Tool-calling AI travel planner for hotels, weather, POI discovery, community reviews, and itineraries.',
 }
 
 export const viewport: Viewport = {

@@ -12,7 +12,7 @@ function getToken(): string {
   return config.key || config.Authorization
 }
 
-export async function searchHotels(keyword: string, city = '三亚'): Promise<string> {
+export async function searchHotels(keyword: string, city = '杭州'): Promise<string> {
   const token = getToken()
 
   const res = await fetch(API_BASE, {

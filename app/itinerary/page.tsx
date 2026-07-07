@@ -23,8 +23,8 @@ export default function ItineraryPage() {
     {
       id: '1', day: 1, title: '第一天',
       activities: [
-        { id: 'a1', time: '14:00', title: '抵达三亚，入住酒店', location: '三亚', note: '' },
-        { id: 'a2', time: '18:00', title: '晚餐（海鲜）', location: '三亚湾', note: '' },
+        { id: 'a1', time: '14:00', title: '抵达目的地，入住酒店', location: '酒店', note: '' },
+        { id: 'a2', time: '18:00', title: '晚餐与周边散步', location: '酒店周边', note: '' },
       ],
     },
     {

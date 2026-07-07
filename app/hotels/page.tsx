@@ -10,7 +10,8 @@ import { Suspense } from 'react'
 
 function HotelSearchContent() {
   const searchParams = useSearchParams()
-  const [keyword, setKeyword] = useState(searchParams.get('keyword') || '三亚酒店')
+  const [city, setCity] = useState(searchParams.get('city') || '杭州')
+  const [keyword, setKeyword] = useState(searchParams.get('keyword') || '西湖酒店')
   const [hotels, setHotels] = useState<Hotel[]>([])
   const [areas, setAreas] = useState<{ name: string; count: number }[]>([])
   const [loading, setLoading] = useState(false)
@@ -19,7 +20,7 @@ function HotelSearchContent() {
   const [compareList, setCompareList] = useState<Hotel[]>([])
   const [showCompare, setShowCompare] = useState(false)
 
-  const search = useCallback(async (kw: string) => {
+  const search = useCallback(async (kw: string, targetCity: string) => {
     if (!kw.trim()) return
     setLoading(true)
     setError('')
@@ -27,7 +28,7 @@ function HotelSearchContent() {
       const res = await fetch('/api/hotels/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keyword: kw }),
+        body: JSON.stringify({ keyword: kw, city: targetCity }),
       })
       const data: HotelSearchResponse & { error?: string } = await res.json()
       if (data.error) throw new Error(data.error)
@@ -42,10 +43,10 @@ function HotelSearchContent() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      search(keyword)
+      search(keyword, city)
     }, 0)
     return () => window.clearTimeout(timer)
-  }, [search, keyword])
+  }, [search, keyword, city])
 
   const filteredHotels = selectedArea
     ? hotels.filter(h => h.area === selectedArea)
@@ -65,18 +66,27 @@ function HotelSearchContent() {
       {/* 搜索栏 */}
       <div className="flex items-center gap-2">
         <div className="flex flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-white p-2">
+          <input
+            type="text"
+            value={city}
+            onChange={e => setCity(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && search(keyword, city)}
+            placeholder="城市"
+            className="w-20 border-none bg-transparent text-sm outline-none"
+          />
+          <span className="h-5 w-px bg-slate-200" />
           <Search className="ml-1 h-4 w-4 text-slate-400" />
           <input
             type="text"
             value={keyword}
             onChange={e => setKeyword(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && search(keyword)}
+            onKeyDown={e => e.key === 'Enter' && search(keyword, city)}
             placeholder="搜索酒店..."
             className="flex-1 border-none bg-transparent text-sm outline-none"
           />
         </div>
         <button
-          onClick={() => search(keyword)}
+          onClick={() => search(keyword, city)}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
         >
           搜索
@@ -126,7 +136,7 @@ function HotelSearchContent() {
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
           <p className="text-red-600">{error}</p>
           <button
-            onClick={() => search(keyword)}
+            onClick={() => search(keyword, city)}
             className="mt-2 rounded-lg bg-red-600 px-4 py-1.5 text-sm text-white hover:bg-red-700"
           >
             重试

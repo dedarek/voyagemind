@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Droplets, Wind, MapPin, Loader2 } from 'lucide-react'
 
 interface WeatherLive {
@@ -23,22 +23,32 @@ interface WeatherForecast {
 }
 
 export default function WeatherPage() {
+  const [city, setCity] = useState('杭州')
   const [live, setLive] = useState<WeatherLive | null>(null)
   const [forecast, setForecast] = useState<WeatherForecast[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    fetch('/api/amap/weather?city=460200')
+  const loadWeather = useCallback((targetCity: string) => {
+    setLoading(true)
+    setError('')
+    fetch(`/api/amap/weather?city=${encodeURIComponent(targetCity)}`)
       .then(res => res.json())
       .then(data => {
         if (data.error) throw new Error(data.error)
         setLive(data.live)
         setForecast(data.forecast || [])
       })
-      .catch(err => setError(err.message))
+      .catch(err => setError(err instanceof Error ? err.message : '天气查询失败'))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      loadWeather('杭州')
+    }, 0)
+    return () => window.clearTimeout(timer)
+  }, [loadWeather])
 
   if (loading) {
     return (
@@ -63,14 +73,32 @@ export default function WeatherPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold">三亚天气</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl font-bold">天气查询</h1>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={city}
+            onChange={e => setCity(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && loadWeather(city)}
+            className="w-32 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-300"
+            placeholder="城市"
+          />
+          <button
+            onClick={() => loadWeather(city)}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+          >
+            查询
+          </button>
+        </div>
+      </div>
 
       {/* 实时天气 */}
       {live && (
         <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-blue-50 to-sky-50 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-400">三亚 · 实时天气</p>
+              <p className="text-xs text-slate-400">{live.city || city} · 实时天气</p>
               <p className="mt-1 text-4xl font-bold">{live.temperature}°C</p>
               <p className="mt-1 text-lg text-slate-600">{live.weather}</p>
             </div>

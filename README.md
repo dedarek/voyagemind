@@ -1,29 +1,65 @@
-# AI Travel Planner
+<p align="center">
+  <img src="./public/voyagemind-logo.svg" alt="VoyageMind logo" width="112" height="112" />
+</p>
 
-一个面向真实旅行规划场景的 AI 助手原型。项目使用 Next.js 构建前端，通过 Function Calling 接入酒店搜索、天气、POI、路线和社区口碑数据，让 Agent 在对话中完成需求收集、信息检索、结果校验和行程建议。
+<h1 align="center">VoyageMind</h1>
 
-## Features
+<p align="center">
+  A tool-calling AI travel planner for hotels, weather, POI discovery, community reviews, and itinerary drafting.
+  <br />
+  一个面向真实旅行规划场景的工具调用型 AI 助手。
+</p>
 
-- Chat-based travel planning assistant with streaming responses
-- Tool calling workflow for hotels, weather, attractions, food, and routes
-- Hotel search with structured parsing, abnormal price filtering, and comparison UI
-- Weather page backed by AMap live weather and forecasts
-- Editable itinerary board for day-by-day trip planning
-- Session logs and requirement markdown generation for debugging Agent behavior
-- Mobile-first UI with quick prompts and stop-generation control
+<p align="center">
+  <a href="#english">English</a> ·
+  <a href="#中文">中文</a>
+</p>
 
-## Tech Stack
+<p align="center">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs" />
+  <img alt="React" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111827" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-10B981" />
+</p>
 
-- Next.js 16 App Router
-- React 19
-- TypeScript
-- Tailwind CSS
-- DeepSeek Chat API
-- AMap Web Service API
-- Zhihu Open Platform search API
-- Meituan travel search endpoint
+---
 
-## Getting Started
+## English
+
+VoyageMind is an AI travel planning prototype built around real-world planning workflows. Instead of relying on the model's memory, it uses tool calls to fetch and verify hotel, weather, POI, route, and community review data before generating travel suggestions.
+
+### Highlights
+
+- Streaming chat interface for travel requirement collection
+- OpenAI-compatible LLM integration
+- Tool calling for hotels, weather, attractions, food, routes, and community reviews
+- Hotel result parsing with abnormal price filtering and comparison UI
+- City-based weather dashboard
+- Editable day-by-day itinerary board
+- Runtime logs and generated requirement snapshots for Agent debugging
+- Mobile-friendly UI with quick prompts and stop-generation control
+
+### Required Keys
+
+VoyageMind expects four categories of credentials:
+
+| Category | Environment variable | Purpose |
+| --- | --- | --- |
+| LLM | `LLM_API_KEY` | OpenAI-compatible chat completion model |
+| AMap | `AMAP_MAPS_API_KEY` / `NEXT_PUBLIC_AMAP_MAPS_API_KEY` | geocoding, POI, weather, route, static map |
+| Meituan | `MEITUAN_TRAVEL_TOKEN` or local config | hotel search |
+| Zhihu | `ZHIHU_API_KEY` | community reviews and travel guide search |
+
+Optional LLM settings:
+
+```bash
+LLM_BASE_URL=https://your-llm-provider.example/v1
+LLM_MODEL=your-model-name
+```
+
+Any provider that exposes an OpenAI-compatible `/chat/completions` endpoint can be used.
+
+### Getting Started
 
 ```bash
 npm install
@@ -33,24 +69,19 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Environment Variables
+### Meituan Token
 
-Create `.env.local` and fill in the variables below:
+You can set:
 
 ```bash
-DEEPSEEK_API_KEY=your_deepseek_api_key
-AMAP_MAPS_API_KEY=your_amap_web_service_key
-NEXT_PUBLIC_AMAP_MAPS_API_KEY=your_amap_web_service_key
-ZHIHU_API_KEY=your_zhihu_api_key
+MEITUAN_TRAVEL_TOKEN=your_meituan_token
 ```
 
-Meituan hotel search currently reads a local token from:
+Or use a local config file:
 
 ```bash
 ~/.config/meituan-travel/config.json
 ```
-
-Expected shape:
 
 ```json
 {
@@ -58,13 +89,25 @@ Expected shape:
 }
 ```
 
-You can also set `MEITUAN_TRAVEL_TOKEN` if you prefer environment variables.
+### Quality Checks
 
-## Project Structure
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
+
+Or:
+
+```bash
+npm run check
+```
+
+### Project Structure
 
 ```text
 app/
-  api/                  API routes for chat, hotels, AMap tools
+  api/                  API routes for chat, hotels, and AMap tools
   hotels/               Hotel search and detail pages
   itinerary/            Editable itinerary page
   weather/              Weather dashboard
@@ -75,13 +118,81 @@ components/
 lib/
   agent.ts              Main travel Agent and tool orchestration
   amap-api.ts           AMap Web Service wrapper
+  city-presets.ts       Optional city presets for geo fallback
   meituan-cli.ts        Meituan hotel search client
   meituan-parser.ts     Markdown-to-hotel structured parser
   zhihu-api.ts          Zhihu search wrapper
 types/                  Shared TypeScript types
 ```
 
-## Quality Checks
+---
+
+## 中文
+
+VoyageMind 是一个面向真实旅行规划场景的 AI 助手原型。它不把模型记忆当作事实来源，而是通过工具调用获取酒店、天气、POI、路线和社区口碑数据，再生成旅行建议。
+
+### 项目亮点
+
+- 流式聊天界面，用于收集旅行需求
+- 支持 OpenAI-compatible LLM，不绑定某一家模型厂商
+- 通过工具调用接入酒店、天气、景点、美食、路线和社区口碑
+- 酒店结果结构化解析，过滤异常低价和无效评分
+- 支持城市天气查询
+- 可编辑的按天行程规划面板
+- 会话日志和需求 Markdown 快照，便于分析 Agent 行为
+- 移动端友好，支持快捷问题和停止生成
+
+### 需要准备的 Key
+
+项目只抽象成四类凭证：
+
+| 类别 | 环境变量 | 用途 |
+| --- | --- | --- |
+| LLM | `LLM_API_KEY` | OpenAI-compatible 聊天模型 |
+| 高德 AMap | `AMAP_MAPS_API_KEY` / `NEXT_PUBLIC_AMAP_MAPS_API_KEY` | 地理编码、POI、天气、路线、静态地图 |
+| 美团 Meituan | `MEITUAN_TRAVEL_TOKEN` 或本地配置 | 酒店搜索 |
+| 知乎 Zhihu | `ZHIHU_API_KEY` | 社区口碑、攻略和避坑搜索 |
+
+LLM 可选配置：
+
+```bash
+LLM_BASE_URL=https://your-llm-provider.example/v1
+LLM_MODEL=your-model-name
+```
+
+只要服务兼容 OpenAI `/chat/completions` 接口，就可以替换为其他模型服务。
+
+### 本地运行
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+打开 [http://localhost:3000](http://localhost:3000)。
+
+### 美团 Token 配置
+
+可以使用环境变量：
+
+```bash
+MEITUAN_TRAVEL_TOKEN=your_meituan_token
+```
+
+也可以使用本地配置文件：
+
+```bash
+~/.config/meituan-travel/config.json
+```
+
+```json
+{
+  "key": "your_meituan_token"
+}
+```
+
+### 质量检查
 
 ```bash
 npm run lint
@@ -89,18 +200,18 @@ npm run typecheck
 npm run build
 ```
 
-Or run all checks:
+或一次性运行：
 
 ```bash
 npm run check
 ```
 
-## Notes
+### 注意事项
 
-- Runtime logs are written to `logs/` and ignored by Git.
-- Generated requirement documents are written to `public/requirements/` and ignored by Git.
-- Do not commit `.env.local`, local API tokens, logs, or generated user requirement files.
-- The project is a product prototype, not a production travel booking service. Always verify price, weather, route, and booking details with authoritative sources before making decisions.
+- `.env.local`、日志和生成的用户需求文档不会提交到 Git。
+- `logs/` 用于本地调试 Agent 行为。
+- `public/requirements/` 用于保存需求快照，默认忽略。
+- 这是一个产品原型，不是正式预订服务；价格、天气、路线和预订信息请以权威平台为准。
 
 ## License
 
