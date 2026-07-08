@@ -417,7 +417,7 @@ export default function Home() {
             {msg.isStreaming && !msg.content ? (
               <div className="flex items-center gap-2 text-sm text-slate-400">
                 <Sparkles className="h-4 w-4 animate-pulse" />
-                <span>小途正在思考...</span>
+                <span>VoyageMind 正在思考...</span>
               </div>
             ) : (
               <div className="text-sm leading-relaxed">
@@ -475,7 +475,7 @@ export default function Home() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="告诉小途你的旅行想法..."
+              placeholder="告诉 VoyageMind 你的旅行想法..."
               disabled={isLoading}
               className="flex-1 border-none bg-transparent text-sm outline-none placeholder:text-slate-400"
             />
@@ -493,7 +493,7 @@ export default function Home() {
           </div>
         </div>
         <p className="mx-auto mt-2 max-w-3xl text-center text-xs text-slate-400 hidden md:block">
-          小途会循循善诱地了解你的需求，为你定制旅行计划
+          VoyageMind 会循循善诱地了解你的需求，为你定制旅行计划
         </p>
       </div>
     </div>
