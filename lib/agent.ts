@@ -426,6 +426,10 @@ const LLM_API_KEY = process.env.LLM_API_KEY || ''
 const LLM_BASE_URL = process.env.LLM_BASE_URL || ''
 const LLM_MODEL = process.env.LLM_MODEL || ''
 
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 async function callLLM(
   messages: ChatMessage[],
   tools?: ToolDef[],
@@ -449,14 +453,30 @@ async function callLLM(
     if (toolChoice) body.tool_choice = toolChoice
   }
 
-  const res = await fetch(`${LLM_BASE_URL.replace(/\/$/, '')}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${LLM_API_KEY}`,
-    },
-    body: JSON.stringify(body),
-  })
+  const endpoint = `${LLM_BASE_URL.replace(/\/$/, '')}/chat/completions`
+  let res: Response | null = null
+  let lastError: unknown = null
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${LLM_API_KEY}`,
+        },
+        body: JSON.stringify(body),
+      })
+      break
+    } catch (error: unknown) {
+      lastError = error
+      if (attempt < 3) await sleep(600 * attempt)
+    }
+  }
+
+  if (!res) {
+    throw new Error(`LLM API 连接失败，请稍后重试：${getErrorMessage(lastError, '网络请求失败')}`)
+  }
 
   if (!res.ok) {
     const errText = await res.text()
@@ -626,6 +646,10 @@ export async function* runAgent(
 
   // 循环结束仍未输出文本，强制做一次不带工具的纯文本生成
   try {
+    messages.push({
+      role: 'user',
+      content: '[系统指令] 工具调用轮次已结束。请不要再说“我去查询”“我来更新需求文档”“稍后给方案”。请直接基于已获得的工具结果，给用户一份完整、可执行的旅行方案。必须包含：湾区选择建议、分段住宿方案、酒店候选对比、西岛安排、海鲜避坑、交通建议、预算提醒、还需要用户确认的信息。如果某项数据不足，请明确说明数据不足，不要编造。',
+    })
     const finalResponse = await callLLM(messages)
     if (finalResponse.content) {
       yield { type: 'text', content: finalResponse.content }

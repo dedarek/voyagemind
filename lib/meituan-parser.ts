@@ -21,7 +21,7 @@ function cleanMarkdownText(value: string): string {
 function isUsefulFeature(value: string): boolean {
   const text = cleanMarkdownText(value)
   if (!text || text.length > 18) return false
-  if (/如果你|建议|升级|Skill|工具|推荐|搜索|需求/.test(text)) return false
+  if (/如果你|比如|或者|当然|建议|升级|Skill|工具|推荐|搜索|需求|小团|完整功能|最佳体验|告诉|##/.test(text)) return false
   return true
 }
 
